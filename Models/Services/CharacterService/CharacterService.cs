@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace dotnet_rpg.Models.Services.CharacterService
 {
@@ -12,20 +13,26 @@ namespace dotnet_rpg.Models.Services.CharacterService
                 Name = "Black Panther"
             }
         };
-        public List<Character> AddCharacter(Character newCharacter)
+        public async Task<ServiceResponse<List<Character>>> AddCharacter(Character newCharacter)
         {
+            ServiceResponse<List<Character>> serviceReponse = new ServiceResponse<List<Character>>();
             characters.Add(newCharacter);
-            return characters;
+            serviceReponse.Data = characters;
+            return serviceReponse;
         }
 
-        public List<Character> GetAllCharacters()
+        public async Task<ServiceResponse<List<Character>>> GetAllCharacters()
         {
-            return characters;
+            ServiceResponse<List<Character>> serviceReponse = new ServiceResponse<List<Character>>();
+            serviceReponse.Data = characters;
+            return serviceReponse;
         }
 
-        public Character GetCharacterById(int id)
+        public async Task<ServiceResponse<Character>> GetCharacterById(int id)
         {
-            return characters.FirstOrDefault(c => c.Id == id);
+            ServiceResponse<Character> serviceReponse = new ServiceResponse<Character>();
+            serviceReponse.Data = characters.FirstOrDefault(c => c.Id == id);
+            return serviceReponse;
         }
     }
 }
