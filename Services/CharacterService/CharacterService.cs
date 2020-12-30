@@ -12,13 +12,6 @@ namespace dotnet_rpg.Services.CharacterService
 {
     public class CharacterService : ICharacterService
     {
-        private static List<Character> characters = new List<Character> {
-            new Character(),
-            new Character {
-                Id = 1,
-                Name = "Black Panther"
-            }
-        };
         private readonly IMapper _mapper;
         private readonly DataContext _context;
         public CharacterService(IMapper mapper, DataContext context)
@@ -27,7 +20,7 @@ namespace dotnet_rpg.Services.CharacterService
             _context = context;
         }
 
-        public static List<Character> Characters { get => characters; set => characters = value; }
+        // public static List<Character> Characters { get => characters; set => characters = value; }
 
         public async Task<ServiceResponse<List<GetCharacterDto>>> AddCharacter(AddCharacterDto newCharacter)
         {
@@ -43,9 +36,11 @@ namespace dotnet_rpg.Services.CharacterService
         {
             ServiceResponse<List<GetCharacterDto>> serviceReponse = new ServiceResponse<List<GetCharacterDto>>();
             try {
-                Character character = Characters.First(c => c.Id == id);
-                Characters.Remove(character);
-                serviceReponse.Data = (Characters.Select(c => _mapper.Map<GetCharacterDto>(c))).ToList();    
+                Character character = await _context.Characters.FirstAsync(c => c.Id == id);
+                _context.Remove(character);
+                await _context.SaveChangesAsync();
+                
+                serviceReponse.Data = (_context.Characters.Select(c => _mapper.Map<GetCharacterDto>(c))).ToList();    
             } catch(Exception ex) {
                 serviceReponse.Success = false;
                 serviceReponse.Message = ex.Message;
